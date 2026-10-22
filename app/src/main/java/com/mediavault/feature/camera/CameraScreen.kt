@@ -22,7 +22,7 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.camera.video.AudioConfig
+import androidx.camera.view.video.AudioConfig
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

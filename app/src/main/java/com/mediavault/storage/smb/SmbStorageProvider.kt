@@ -32,7 +32,7 @@ class SmbStorageProvider(
     private fun map(e: Exception): StorageException = when {
         e is StorageException -> e
         e is SMBApiException -> when (e.status) {
-            NtStatus.STATUS_LOGON_FAILURE, NtStatus.STATUS_WRONG_PASSWORD, NtStatus.STATUS_ACCOUNT_DISABLED ->
+            NtStatus.STATUS_LOGON_FAILURE, NtStatus.STATUS_ACCOUNT_DISABLED ->
                 failure(StorageErrorType.AUTH, "Login failed. Check the username, password and domain.")
             NtStatus.STATUS_ACCESS_DENIED, NtStatus.STATUS_SHARING_VIOLATION ->
                 failure(StorageErrorType.PERMISSION, "Access denied by the server.")

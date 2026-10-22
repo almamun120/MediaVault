@@ -128,7 +128,7 @@ private fun CaptureStage(vm: ScannerViewModel, count: Int, onDone: () -> Unit, o
     LaunchedEffect(flash) { controller.imageCaptureFlashMode = flash }
 
     Box(Modifier.fillMaxSize().background(Color.Black)) {
-        AndroidView(Modifier.fillMaxSize(), factory = { c -> PreviewView(c).apply { this.controller = controller; scaleType = PreviewView.ScaleType.FIT_CENTER } })
+        AndroidView(modifier = Modifier.fillMaxSize(), factory = { c -> PreviewView(c).apply { this.controller = controller; scaleType = PreviewView.ScaleType.FIT_CENTER } })
         Row(Modifier.align(Alignment.TopStart).padding(8.dp)) {
             IconButton(onClick = {
                 flash = when (flash) {
