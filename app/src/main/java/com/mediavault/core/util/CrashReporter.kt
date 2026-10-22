@@ -14,13 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import java.io.File
 
 /**
- * Saves the stack trace of an uncrashed-handled exception to app storage (nothing is sent anywhere) and shows it
+ * Saves the stack trace of an uncaught exception to app storage (nothing is sent anywhere) and shows it
  * on the next launch so it can be copied and reported without adb.
  */
 object CrashReporter {
