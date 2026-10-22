@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- vault door ring -->
+    <path android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="4" android:pathData="M54,54m-26,0a26,26 0,1 1,52 0a26,26 0,1 1,-52 0"/>
+    <!-- camera lens ring -->
+    <path android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="5" android:pathData="M54,54m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0"/>
+    <!-- lens core -->
+    <path android:fillColor="#000000" android:pathData="M54,54m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"/>
+    <!-- highlight -->
+    <path android:fillColor="#FFFFFF" android:pathData="M51,51m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"/>
+    <!-- bolts -->
+    <path android:fillColor="#000000" android:pathData="M52,24h4v6h-4z M52,78h4v6h-4z M24,52h6v4h-6z M78,52h6v4h-6z"/>
+</vector>

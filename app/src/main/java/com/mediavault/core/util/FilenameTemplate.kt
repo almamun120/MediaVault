@@ -17,7 +17,7 @@ object FilenameTemplate {
             token.replace(template) { m ->
                 try {
                     DateTimeFormatter.ofPattern(m.groupValues[1]).format(time)
-                } catch (e: IllegalArgumentException) {
+                } catch (e: RuntimeException) { // bad pattern letters or unsupported fields
                     m.value
                 }
             },

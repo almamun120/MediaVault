@@ -9,6 +9,8 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +45,7 @@ import java.util.UUID
 
 private val selectable = DestinationType.entries.filter { it != DestinationType.NFS }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DestinationEditor(initial: DestinationEntity?, vm: StorageViewModel, onDismiss: () -> Unit) {
     val ctx = LocalContext.current
@@ -110,9 +113,10 @@ fun DestinationEditor(initial: DestinationEntity?, vm: StorageViewModel, onDismi
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (initial == null) {
-                    Row(Modifier.horizontalScroll(rememberScrollState())) {
+                    Text("Type", style = MaterialTheme.typography.titleSmall)
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         selectable.forEach { t ->
-                            FilterChip(selected = type == t, onClick = { type = t; message = null }, label = { Text(t.label) }, modifier = Modifier.padding(end = 6.dp))
+                            FilterChip(selected = type == t, onClick = { type = t; message = null }, label = { Text(t.label) })
                         }
                     }
                     Text("NFS is not offered: standard Android cannot mount NFS without root. Share the folder over SMB or WebDAV instead.", style = MaterialTheme.typography.bodySmall)

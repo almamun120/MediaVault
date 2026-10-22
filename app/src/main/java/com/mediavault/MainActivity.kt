@@ -13,6 +13,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { MediaVaultTheme { MediaVaultRoot() } }
+        setContent { MediaVaultTheme { MediaVaultRoot(); com.mediavault.core.util.CrashDialog() } }
     }
 }

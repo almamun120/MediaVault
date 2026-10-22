@@ -3,6 +3,8 @@ package com.mediavault.feature.settings
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -103,6 +105,7 @@ fun RulesSection(vm: RulesViewModel = hiltViewModel()) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RuleEditor(initial: RuleEntity?, dests: List<DestinationEntity>, onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit) {
     var media by remember { mutableStateOf(initial?.media ?: RuleMedia.PHOTO.name) }
@@ -128,16 +131,16 @@ private fun RuleEditor(initial: RuleEntity?, dests: List<DestinationEntity>, onS
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Media type")
-                Row(Modifier.horizontalScroll(rememberScrollState())) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     RuleMedia.entries.forEach { m -> FilterChip(media == m.name, { media = m.name }, label = { Text(m.label) }, modifier = Modifier.padding(end = 6.dp)) }
                 }
                 Text("Primary destination")
-                Row(Modifier.horizontalScroll(rememberScrollState())) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     dests.forEach { d -> FilterChip(primary == d.id, { primary = d.id; backups = backups - d.id }, label = { Text(d.name) }, modifier = Modifier.padding(end = 6.dp)) }
                 }
                 if (dests.size > 1) {
                     Text("Also copy to (backups)")
-                    Row(Modifier.horizontalScroll(rememberScrollState())) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         dests.filter { it.id != primary }.forEach { d ->
                             FilterChip(d.id in backups, { backups = if (d.id in backups) backups - d.id else backups + d.id }, label = { Text(d.name) }, modifier = Modifier.padding(end = 6.dp))
                         }

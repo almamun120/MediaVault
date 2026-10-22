@@ -1,5 +1,10 @@
 # Signed release builds on GitHub
 
+**Without any setup** the workflow now creates one signing key on its first run, keeps it in the GitHub Actions cache
+and signs every release APK with it, so `MediaVault-release-signed-N.apk` is installable and later builds update it.
+If GitHub ever evicts that cache (unused for 7 days, or storage pressure) the key changes and you must uninstall the app
+once before installing the next build. For a permanent key follow the steps below and add the four secrets.
+
 1. Create a keystore ONCE and keep it (and its passwords) somewhere safe. If you lose it you can never update the app.
    ```
    keytool -genkeypair -v -keystore mediavault-release.jks -alias mediavault \

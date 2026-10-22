@@ -19,11 +19,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    env:
-      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -49,17 +44,53 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Decode release keystore
-        if: env.KEYSTORE_BASE64 != ''
+      - name: Restore auto-generated signing key (fallback when no secrets are set)
+        uses: actions/cache@v4
+        with:
+          path: .signing
+          key: mediavault-autokey-v1
+
+      - name: Prepare release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          S_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          S_ALIAS: ${{ secrets.KEY_ALIAS }}
+          S_KEYPASS: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
-          echo "KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            # Your own permanent key from repository secrets (see SIGNING.md). Kept OUT of the cached folder.
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            KS="$RUNNER_TEMP/release.jks"; PASS="$S_PASS"; ALIAS="$S_ALIAS"; KPASS="$S_KEYPASS"
+            echo "Signing with the key from repository secrets."
+          else
+            # No secrets: create ONE key and keep it in the Actions cache so every build is signed with the same
+            # certificate (updates install over each other). If GitHub evicts the cache the key changes and you must
+            # uninstall the old app once. For a permanent key set the secrets from SIGNING.md.
+            mkdir -p .signing
+            if [ ! -f .signing/release.jks ]; then
+              openssl rand -hex 16 > .signing/pw.txt
+              keytool -genkeypair -keystore .signing/release.jks -alias mediavault -keyalg RSA -keysize 4096 \
+                -validity 10000 -storepass "$(cat .signing/pw.txt)" -keypass "$(cat .signing/pw.txt)" \
+                -dname "CN=MediaVault, O=Personal, C=BD"
+              echo "Generated a new signing key (stored in the Actions cache)."
+            else
+              echo "Reusing the signing key from the Actions cache."
+            fi
+            KS="$GITHUB_WORKSPACE/.signing/release.jks"; PASS="$(cat .signing/pw.txt)"; ALIAS="mediavault"; KPASS="$PASS"
+          fi
+          echo "::add-mask::$PASS"
+          echo "::add-mask::$KPASS"
+          {
+            echo "KEYSTORE_PATH=$KS"
+            echo "KEYSTORE_PASSWORD=$PASS"
+            echo "KEY_ALIAS=$ALIAS"
+            echo "KEY_PASSWORD=$KPASS"
+          } >> "$GITHUB_ENV"
 
       - name: Build release APK and AAB
         run: ./gradlew assembleRelease bundleRelease --stacktrace
 
       - name: Verify release signature
-        if: env.KEYSTORE_BASE64 != ''
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
           "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk

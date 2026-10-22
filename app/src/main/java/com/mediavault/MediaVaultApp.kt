@@ -21,6 +21,7 @@ class MediaVaultApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        com.mediavault.core.util.CrashReporter.install(this)
         // After a restart/reboot, make sure queued uploads still have their work scheduled.
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch { queue.reconcile() }
     }
