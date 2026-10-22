@@ -34,7 +34,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: android-actions/setup-android@v3
+      - name: Accept Android SDK licenses
+        run: |
+          # The runner image already ships the Android SDK (ANDROID_HOME). Gradle only needs the licenses accepted
+          # so it can fetch any missing platform/build-tools itself.
+          SDKM=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
+          yes | "$SDKM" --licenses > /dev/null || true
 
       - uses: gradle/actions/setup-gradle@v4
 
@@ -102,7 +107,12 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      - name: Accept Android SDK licenses
+        run: |
+          # The runner image already ships the Android SDK (ANDROID_HOME). Gradle only needs the licenses accepted
+          # so it can fetch any missing platform/build-tools itself.
+          SDKM=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
+          yes | "$SDKM" --licenses > /dev/null || true
       - uses: gradle/actions/setup-gradle@v4
       - run: chmod +x gradlew
       - run: ./gradlew testDebugUnitTest --stacktrace
