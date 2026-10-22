@@ -9,7 +9,8 @@ import java.time.format.DateTimeFormatter
  * Text inside braces is a java.time pattern; everything else is literal.
  */
 object FilenameTemplate {
-    private val token = Regex("\\{([^{}]+)}")
+    // Android's ICU regex engine (unlike the JVM) rejects an unescaped closing brace, so both braces are escaped.
+    private val token = Regex("\\{([^{}]+)\\}")
     private val illegal = Regex("[\\\\/:*?\"<>|\\p{Cntrl}]")
 
     fun render(template: String, time: ZonedDateTime): String =
